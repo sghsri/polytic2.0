@@ -10,6 +10,24 @@
 
 <body>
     <h2>Polytic</h2>
+    <ul id="list"></ul>
 </body>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+<script>
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            var officials = JSON.parse(this.responseText).officials;
+            console.log(officials);
+            for (let i = 0; i < officials.length; i++) {
+                var off = officials[i];
+                $("#list").append(`<li>${off.name}</li>`)
+            }
+        }
+    };
+    xhttp.open("GET", `/api/reps`, true);
+    xhttp.send();
+</script>
 
 </html>
