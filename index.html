@@ -22,7 +22,8 @@
             console.log(officials);
             for (let i = 0; i < officials.length; i++) {
                 var off = officials[i];
-                $("#list").append(`<li>${off.name}</li>`)
+                $("#list").append(
+                    `<li><img src= ${off.photoUrl} width="100px" height="100px"></img>${off.name}</li>`)
             }
         }
     };

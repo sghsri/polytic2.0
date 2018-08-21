@@ -1,5 +1,6 @@
 const express = require('express');
 const request = require('request');
+var cheerio = require('cheerio');
 const app = express();
 var server = require('http').createServer(app);
 var bodyParser = require('body-parser');
@@ -17,6 +18,7 @@ app.get("/api/reps", (req, res) => {
         if (err) {
             res.send("ERROR");
         } else {
+            scrapeReps();
             let reps = JSON.parse(body);
             if (reps.cod == "404") {
                 res.send(reps.message);
@@ -40,7 +42,25 @@ app.use(function (req, res, next) {
     .use(express.static(__dirname))
     .use(bodyParser.json());
 
-
+function scrapeReps() {
+    let url = "https://www.govtrack.us/congress/members/TX/7#q=17531%20Bending%20Post%20Drive&marker_lng=-95.683125&marker_lat=29.918758";
+    request(url, function (error, response, html) {
+        if (!error && response.statusCode == 200) {
+            let $ = cheerio.load(html);
+            $('.btn-success').each(function (i, element) {
+                var repurl = $(this).prop('href');
+                request("https://www.govtrack.us" + repurl, function (error, response, html) {
+                    if (!error && response.statusCode == 200) {
+                        let $ = cheerio.load(html);
+                        $('#scorecards>a').each(function (i, element) {
+                            console.log($(this).text());
+                        });
+                    }
+                });
+            });
+        }
+    });
+}
 const port = process.env.PORT || 3000;
 server.listen(port, () => {
     console.log(`Listening on port: ${port}`);
